@@ -1,0 +1,17 @@
+body{
+    background-image: url(carte_francesi/table1.jpg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    border-left: 20px;    
+}
+header{
+    font-family: 'Casino', sans-serif;
+    text-align: center;
+    margin-top: 10%;
+    font-size: 50px;
+}
+#pulsanti{
+    align-items: center;
+}
