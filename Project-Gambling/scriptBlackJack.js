@@ -1,5 +1,5 @@
 function DeckManager(){
-    const cuori = ["/carte_francesi/casso.png",
+    this.cuori = ["/carte_francesi/casso.png",
         "/carte_francesi/c2.png",
         "/carte_francesi/c3.png",
         "/carte_francesi/c4.png",
@@ -13,7 +13,7 @@ function DeckManager(){
         "/carte_francesi/ck.png",
         "/carte_francesi/cq.png"];
 
-    const fiori = ["/carte_francesi/fasso.png",
+    this.fiori = ["/carte_francesi/fasso.png",
         "/carte_francesi/f2.png",
         "/carte_francesi/f3.png",
         "/carte_francesi/f4.png",
@@ -27,7 +27,7 @@ function DeckManager(){
         "/carte_francesi/fk.png",
         "/carte_francesi/fq.png"];
 
-    const picche = ["/carte_francesi/passo.png",
+    this.picche = ["/carte_francesi/passo.png",
         "/carte_francesi/p2.png",
         "/carte_francesi/p3.png",
         "/carte_francesi/p4.png",
@@ -41,7 +41,7 @@ function DeckManager(){
         "/carte_francesi/pk.png",
         "/carte_francesi/pq.png"];
 
-    const quadri = ["/carte_francesi/qasso.png",
+    this.quadri = ["/carte_francesi/qasso.png",
         "/carte_francesi/q2.png",
         "/carte_francesi/q3.png",
         "/carte_francesi/q4.png",
@@ -55,9 +55,9 @@ function DeckManager(){
         "/carte_francesi/qk.png",
         "/carte_francesi/qq.png"];
 
-        const cardSeed = [this.cuori, this.fiori, this.picche, this.quadri];
+        this.cardSeed = [this.cuori, this.fiori, this.picche, this.quadri];
 
-        function getCard(){            
+        this.getCard = function(){            
             let randomValue = Math.floor(Math.random(13));
             let randomSeed = Math.floor(Math.random(4));
 
@@ -74,23 +74,26 @@ function DeckManager(){
 }
 
 function BlackJack(){
-    let deck = new DeckManager();
-    let deckDealer;
-    let userDeck;    
+    this.deck = new DeckManager();
+    this.deckDealer;
+    this.userDeck;    
     
-    function start(){
-        let nome = prompt("Inserisci il tuo nome");        
+    this.start = function() {
+        let nome = prompt("Inserisci il tuo nome");
+        let denaro = undefined;        
 
         do{
-            let denaro = prompt("Quanti soldi hai?");
+            denaro = prompt("Quanti soldi hai?");
 
             if(denaro > 50){
                 break;
             }
+            console.log(denaro);
 
             alert("VATTENE VIA PEZZENTE O INSERISCI ALTRI SOLDI");            
         } while(true);
 
+        console.log(denaro);
         let user = new User(nome, denaro);
 
         if(user.nome.toLowerCase() == "riccardo"){
@@ -98,25 +101,41 @@ function BlackJack(){
         } else{
             alert(`Benvenuto Egregio ${nome}, comincerai con un saldo di ${denaro}`);
         }
-
         this.game();
     }
 
-    function showCard(){
-        return deck.getCard();
+    this.game = function(){ // ascolta gli eventi
+        let dealButton = document.querySelector("#deal-button");
+        let askButton = document.querySelector("#ask-button");
+        let standButton = document.querySelector("#stand-button");
+        let surrender = document.querySelector("#surrender");
+
+        dealButton.addEventListener('click', this.deal);
+        askButton.addEventListener('click', this.hit);
+        standButton.addEventListener('click', this.stand);
+    }
+
+    this.showCard = function(image){
+        let div = document.querySelector(".user-cards");
+        let card = document.createElement("img");
+
+        card.src = image;
+
+        div.appendChild(card);
     }
 
     function userBet(){}
 
-    function deal(){} // chiedi la prima carta
+    this.deal = function(){
+        console.log(this.deck);
+        let shownCard = this.deck.getCard();
+    
+        this.showCard(shownCard[2]);
+    } // chiedi la prima carta
 
-    function hit(){} // chiedi un'altra carta
+    this.hit = function(){} // chiedi un'altra carta
 
-    function stand(){} // chiedi il risultato
-
-    function game(){ // ascolta gli eventi
-        
-    }
+    this.stand = function(){} // chiedi il risultato    
 }
 
 function User(nome, saldo){
@@ -132,3 +151,7 @@ function User(nome, saldo){
     }
 }
 
+let game = new BlackJack();
+// console.log(game);
+// console.log(BlackJack);
+game.start();
