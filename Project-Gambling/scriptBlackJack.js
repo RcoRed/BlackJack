@@ -64,13 +64,11 @@ DeckManager.prototype.getCard = function(){
         let randomSeed = Math.floor(Math.random()*4);
 
         let card = this.cardSeed[randomSeed][randomValue];
-        console.log(randomValue);
-        if(randomValue > 8){
-            randomValue = 10;
+        if(randomValue > 9){
+            randomValue = 0;
         }else{
             randomValue++;
         }
-        console.log(randomValue);
 
         let realCard = [randomValue, card];
 
@@ -150,65 +148,79 @@ BlackJack.prototype.deal = function(){
     this.standButton.disabled = false;
     this.askButton.disabled = false;
 
-    console.log("user1");
     let card = this.deckManager.getCard();
     this.showCard(card[1]);
     this.userDeck.push(card[0]);
 
-    console.log("bot1");
     card = this.deckManager.getCard();
     this.showCardBot(card[1]);
     this.dealerDeck.push(card[0]);
-    this.dealerTotal=card[0];
+    this.dealerTotal=this.count(this.dealerDeck);
 
-    console.log("user2");
     card = this.deckManager.getCard();
     this.showCard(card[1]);
     this.userDeck.push(card[0]);
 
+    if((this.userDeck[1] == 0 || this.userDeck[0] == 0) && (this.userDeck[1] == 1 || this.userDeck[0] == 1)){
+        this.standButton.disabled = true;
+        this.askButton.disabled = true;
+        if(this.dealerDeck[0] == 11 || this.dealerDeck[0] == 0 || this.dealerDeck[0] == 1){
+            this.controlBlackJack();
+            return;
+        }
+        let resultH2 = document.querySelector(".result");
+        resultH2.innerHTML = `${this.user.nome} HA VINTO PER BLACK JACK!`;
+        let buttons = document.querySelectorAll("button");
+        buttons.disabled = true;
+    }
+
     this.user.total = this.count(this.userDeck);
     this.updateScore(this.user.total);
 } // chiedi la prima carta
+BlackJack.prototype.controlBlackJack = function(){
+    let card = this.deckManager.getCard();
+    this.showCardBot(card[1]);
+    this.dealerDeck.push(card[0]);
+    //this.dealerTotal=this.count(this.dealerDeck);
+    if(this.dealerDeck[1] == 11 || this.dealerDeck[1] == 0 || this.dealerDeck[1] == 1){
+        let resultH2 = document.querySelector(".result");
+        resultH2.innerHTML = `IL DEALER HA VINTO. PER BLACK JACK.`;
+        let buttons = document.querySelectorAll("button");
+        buttons.disabled = true;
+        return;
+    }
+    let resultH2 = document.querySelector(".result");
+    resultH2.innerHTML = `${this.user.nome} HA VINTO PER BLACK JACK!`;
+    let buttons = document.querySelectorAll("button");
+    buttons.disabled = true;
+}
 BlackJack.prototype.count = function(deck){
     let total = 0;
     let asso = false;
-    console.log("dentro count");
-    console.log(total);
     for(let value of deck){
+        if(value == 0){
+            value = 10;
+        }
         if(value == 1){
-            console.log("dentro in = 1");
             asso = true;
             total += 11;
             if(total > 21){
-                console.log("dentro in > 21");
                 total -= 10;
             }
         }else{
-            console.log("dentro else");
-            console.log(total);
             total += value;
-            console.log("dentro else dopo addizione");
-            console.log(total);
         }
     }
-    console.log(total);
 
     if(total > 21){
-        console.log("dentro controllo");
         if(asso){
-            console.log("dentro asso");
             total -= 10;
         }
         if(total > 21){
-            console.log("dentro secondo controllo");
             this.endGame();
             return "bust";
         }
-        console.log("total dentro if");
-        console.log(total);
     }
-    console.log("total finale");
-    console.log(total);
     return total;
 }
 BlackJack.prototype.control = function(userScore){
