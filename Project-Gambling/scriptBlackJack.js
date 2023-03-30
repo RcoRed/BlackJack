@@ -60,28 +60,40 @@ function DeckManager(){
 
 }
 DeckManager.prototype.getCard = function(){
-        let randomValue = Math.floor(Math.random()*13);
-        let randomSeed = Math.floor(Math.random()*4);
-
-        let card = this.cardSeed[randomSeed][randomValue];
-        if(randomValue > 9){
-            randomValue = 0;
-        }else{
-            randomValue++;
+    let card = null;
+    let randomValue = null;
+    let randomSeed = null;
+    do{
+        randomValue = Math.floor(Math.random()*13);
+        randomSeed = Math.floor(Math.random()*4);
+        if(this.cardSeed[randomSeed][randomValue]){
+            card = this.cardSeed[randomSeed][randomValue];
+            this.cardSeed[randomSeed][randomValue] = null;
+            break;
         }
+    }while(true)
 
-        let realCard = [randomValue, card];
+    if(randomValue > 9){
+        randomValue = 0;
+    }else{
+        randomValue++;
+    }
 
-        return realCard;
+    let realCard = [randomValue, card];
+
+    return realCard;
 }
 
 function BlackJack(){
+    this.counterCards = 0;
+    this.bet = 0;
     this.done = false;
     this.deckManager = new DeckManager();
     this.dealerDeck = [];
     this.userDeck = [];
     this.dealerTotal = 0;
     this.user = null;
+    this.inputBet = document.querySelector("#bet");
     this.dealButton = document.querySelector("#deal-button");
     this.askButton = document.querySelector("#ask-button");
     this.standButton = document.querySelector("#stand-button");
@@ -103,6 +115,7 @@ BlackJack.prototype.start = function(){
 
     do{
         cash = prompt("Quanti soldi hai?");
+        cash = +cash;
         if(cash > 50){
             break;
         }
@@ -116,6 +129,8 @@ BlackJack.prototype.start = function(){
     } else{
         alert(`Benvenuto Egregio ${name}, comincerai con un saldo di ${cash}`);
     }
+
+    this.showUser();
     this.menu();
 };
 BlackJack.prototype.menu = function(){// ascolta gli eventi
@@ -136,17 +151,45 @@ BlackJack.prototype.showCardBot = function(image){
     card.src = image;
     div.appendChild(card);
 }
+BlackJack.prototype.showUser = function(){
+    let div = document.querySelector("#data");
+    div.removeChild(div.firstChild);
+    let h3 = document.createElement("h3");
+    h3.innerHTML = `${this.user.saldo}$ ${this.user.nome}`;
+    div.appendChild(h3);
+}
 BlackJack.prototype.updateScore = function(score){
     let span = document.querySelector("#punteggio");
     span.innerHTML = score;
 }
-BlackJack.prototype.userBet = function(){
-
+BlackJack.prototype.userBet = function(valore){
+    if(!this.user.puntaSoldi(valore)){
+        this.dealButton.disabled = false;
+        this.standButton.disabled = true;
+        this.askButton.disabled = true;
+        let resultH2 = document.querySelector(".result");
+        resultH2.innerHTML = `NON HAI ABBASTANZA SOLDI`;
+        return false;
+    }
+    return true;
 }
 BlackJack.prototype.deal = function(){
+    if(this.counterCards>20){
+        console.log("nuovo mazzo");
+        this.deckManager = new DeckManager();
+        this.counterCards = 0;
+
+    }
     this.dealButton.disabled = true;
     this.standButton.disabled = false;
     this.askButton.disabled = false;
+
+    this.bet = +this.inputBet.value;
+    if(!this.userBet(this.bet)){
+        return;
+    }
+
+    this.showUser();
 
     let card = this.deckManager.getCard();
     this.showCard(card[1]);
@@ -168,12 +211,14 @@ BlackJack.prototype.deal = function(){
             this.controlBlackJack();
             return;
         }
+        this.user.aggiungiSoldi(this.bet*2);
         let resultH2 = document.querySelector(".result");
         resultH2.innerHTML = `${this.user.nome} HA VINTO PER BLACK JACK!`;
         let buttons = document.querySelectorAll("button");
         buttons.disabled = true;
     }
 
+    this.counterCards += 3;
     this.user.total = this.count(this.userDeck);
     this.updateScore(this.user.total);
 } // chiedi la prima carta
@@ -189,6 +234,8 @@ BlackJack.prototype.controlBlackJack = function(){
         buttons.disabled = true;
         return;
     }
+    this.user.aggiungiSoldi(this.bet*2);
+    this.showUser();
     let resultH2 = document.querySelector(".result");
     resultH2.innerHTML = `${this.user.nome} HA VINTO PER BLACK JACK!`;
     let buttons = document.querySelectorAll("button");
@@ -234,7 +281,10 @@ BlackJack.prototype.control = function(userScore){
     if(!this.done){
         return;
     }
+    this.done = false;
     if(this.dealerTotal=="bust" || userScore>this.dealerTotal){
+        this.user.aggiungiSoldi(this.bet*2);
+        this.showUser();
         resultH2.innerHTML = `${this.user.nome} HA VINTO!`;
         let buttons = document.querySelectorAll("button");
         buttons.disabled = true;
@@ -246,6 +296,8 @@ BlackJack.prototype.control = function(userScore){
         buttons.disabled = true;
         return;
     }
+    this.user.aggiungiSoldi(this.bet);
+    this.showUser();
     resultH2.innerHTML = `PAREGGIO.`;
     let buttons = document.querySelectorAll("button");
     buttons.disabled = true;
@@ -276,6 +328,8 @@ BlackJack.prototype.stopGame = function(){
     span.innerHTML = 0;
 }
 BlackJack.prototype.hit = function(){
+    this.counterCards++;
+    this.showUser();
     let card = this.deckManager.getCard();
     this.showCard(card[1]);
     this.userDeck.push(card[0]);
@@ -290,6 +344,7 @@ BlackJack.prototype.stand = function(){
     this.standButton.disabled = true;
     this.askButton.disabled = true;
     do{
+        this.counterCards++;
         let card = this.deckManager.getCard();
         this.showCardBot(card[1]);
         this.dealerDeck.push(card[0]);
@@ -303,10 +358,14 @@ function User(nome, saldo){
     this.saldo = saldo;
     this.total = 0;
 }
-User.prototype.puntaSoldi = function(){
-    this.saldo -= valore;
+User.prototype.puntaSoldi = function(value){
+    if(value <= this.saldo){
+        this.saldo -= value;
+        return true;
+    }
+    return false;
 }
-User.prototype.aggiungiSoldi = function(){
+User.prototype.aggiungiSoldi = function(valore){
     this.saldo += valore;
 }
 
