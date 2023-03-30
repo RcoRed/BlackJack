@@ -57,191 +57,245 @@ function DeckManager(){
 
     this.cardSeed = [this.cuori, this.fiori, this.picche, this.quadri];
 
-    this.getCard = function(){
+
+}
+DeckManager.prototype.getCard = function(){
         let randomValue = Math.floor(Math.random()*13);
         let randomSeed = Math.floor(Math.random()*4);
 
         let card = this.cardSeed[randomSeed][randomValue];
-
+        console.log(randomValue);
         if(randomValue > 8){
             randomValue = 10;
         }else{
             randomValue++;
         }
+        console.log(randomValue);
 
         let realCard = [randomValue, card];
 
         return realCard;
-    }
 }
 
 function BlackJack(){
+    this.done = false;
     this.deckManager = new DeckManager();
     this.dealerDeck = [];
     this.userDeck = [];
+    this.dealerTotal = 0;
+    this.user = null;
     this.dealButton = document.querySelector("#deal-button");
     this.askButton = document.querySelector("#ask-button");
     this.standButton = document.querySelector("#stand-button");
     this.surrender = document.querySelector("#surrender");
-
-    this.start = function() {
-        this.dealButton.disabled = false;
-        this.standButton.disabled = true;
-        this.askButton.disabled = true;
-        let name = null;
-        let cash = null;
-        do{
-            name = prompt("Inserisci il tuo nome");
-            if(name){
-                break;
-            }
-            alert("IL NOME È E NON PUO NON ESSERE");
-        } while(true)
-
-        do{
-            cash = prompt("Quanti soldi hai?");
-            if(cash > 50){
-                break;
-            }
-            alert("VATTENE VIA PEZZENTE O INSERISCI ALTRI SOLDI");
-        } while(true);
-
-        let user = new User(name, cash);
-
-        if(user.nome.toLowerCase() == "riccardo"){
-            alert(`Benvenuto babbo di minchia, comincerai con un saldo di ${cash}`);
-        } else{
-            alert(`Benvenuto Egregio ${name}, comincerai con un saldo di ${cash}`);
+}
+BlackJack.prototype.start = function(){
+    this.dealButton.disabled = false;
+    this.standButton.disabled = true;
+    this.askButton.disabled = true;
+    let name = null;
+    let cash = null;
+    do{
+        name = prompt("Inserisci il tuo nome");
+        if(name){
+            break;
         }
-        this.menu();
+        alert("IL NOME È E NON PUO NON ESSERE");
+    } while(true)
+
+    do{
+        cash = prompt("Quanti soldi hai?");
+        if(cash > 50){
+            break;
+        }
+        alert("VATTENE VIA PEZZENTE O INSERISCI ALTRI SOLDI");
+    } while(true);
+
+    this.user = new User(name, cash);
+
+    if(this.user.nome.toLowerCase() == "riccardo"){
+        alert(`Benvenuto babbo di minchia, comincerai con un saldo di ${cash}`);
+    } else{
+        alert(`Benvenuto Egregio ${name}, comincerai con un saldo di ${cash}`);
     }
+    this.menu();
+};
+BlackJack.prototype.menu = function(){// ascolta gli eventi
+    this.dealButton.addEventListener('click', this.deal.bind(this));
+    this.askButton.addEventListener('click', this.hit.bind(this));
+    this.standButton.addEventListener('click', this.stand.bind(this));
+    this.surrender.addEventListener('click', this.stopGame.bind(this));
+}
+BlackJack.prototype.showCard = function(image){
+    let div = document.querySelector(".user-cards");
+    let card = document.createElement("img");
+    card.src = image;
+    div.appendChild(card);
+}
+BlackJack.prototype.showCardBot = function(image){
+    let div = document.querySelector(".cpu");
+    let card = document.createElement("img");
+    card.src = image;
+    div.appendChild(card);
+}
+BlackJack.prototype.updateScore = function(score){
+    let span = document.querySelector("#punteggio");
+    span.innerHTML = score;
+}
+BlackJack.prototype.userBet = function(){
 
-    this.menu = function(){ // ascolta gli eventi
-        this.dealButton.addEventListener('click', deal.bind(this));
-        this.askButton.addEventListener('click', hit.bind(this));
-        this.standButton.addEventListener('click', stand.bind(this));
-        this.surrender.addEventListener('click', stopGame.bind(this));
-    }
+}
+BlackJack.prototype.deal = function(){
+    this.dealButton.disabled = true;
+    this.standButton.disabled = false;
+    this.askButton.disabled = false;
 
-    function showCard(image){
-        let div = document.querySelector(".user-cards");
-        let card = document.createElement("img");
-        card.src = image;
-        div.appendChild(card);
-    }
-    function showCardBot(image){
-        let div = document.querySelector(".cpu");
-        let card = document.createElement("img");
-        card.src = image;
-        div.appendChild(card);
-    }
-    function updateScore(score){
-        let span = document.querySelector("#punteggio");
-        span.innerHTML = score;
-    }
+    console.log("user1");
+    let card = this.deckManager.getCard();
+    this.showCard(card[1]);
+    this.userDeck.push(card[0]);
 
-    function userBet(){}
+    console.log("bot1");
+    card = this.deckManager.getCard();
+    this.showCardBot(card[1]);
+    this.dealerDeck.push(card[0]);
+    this.dealerTotal=card[0];
 
-    function deal(){
-        this.dealButton.disabled = true;
-        this.standButton.disabled = false;
-        this.askButton.disabled = false;
+    console.log("user2");
+    card = this.deckManager.getCard();
+    this.showCard(card[1]);
+    this.userDeck.push(card[0]);
 
-        let card = this.deckManager.getCard();
-        showCard(card[1]);
-        this.userDeck.push(card[0]);
-
-        card = this.deckManager.getCard();
-        showCardBot(card[1]);
-        this.dealerDeck.push(card[0]);
-
-        card = this.deckManager.getCard();
-        showCard(card[1]);
-        this.userDeck.push(card[0]);
-
-        let score = count(this.userDeck);
-        updateScore(score);
-        control(score,score);
-    } // chiedi la prima carta
-
-    function count(deck){
-        this.dealButton = document.querySelector("#deal-button");
-        this.askButton = document.querySelector("#ask-button");
-        this.standButton = document.querySelector("#stand-button");
-        console.log(this.dealButton);
-        console.log(this.standButton);
-        console.log(this.askButton);
-        let total = null;
-        for(let value of deck){
-            if(value == 1){
-                total += 11;
-                if(total > 21){
-                    total -= 10;
-                }
-            }else{
-                total += value;
+    this.user.total = this.count(this.userDeck);
+    this.updateScore(this.user.total);
+} // chiedi la prima carta
+BlackJack.prototype.count = function(deck){
+    let total = 0;
+    let asso = false;
+    console.log("dentro count");
+    console.log(total);
+    for(let value of deck){
+        if(value == 1){
+            console.log("dentro in = 1");
+            asso = true;
+            total += 11;
+            if(total > 21){
+                console.log("dentro in > 21");
+                total -= 10;
             }
+        }else{
+            console.log("dentro else");
+            console.log(total);
+            total += value;
+            console.log("dentro else dopo addizione");
+            console.log(total);
+        }
+    }
+    console.log(total);
+
+    if(total > 21){
+        console.log("dentro controllo");
+        if(asso){
+            console.log("dentro asso");
+            total -= 10;
         }
         if(total > 21){
-            endGame();
+            console.log("dentro secondo controllo");
+            this.endGame();
             return "bust";
         }
-        return total;
+        console.log("total dentro if");
+        console.log(total);
     }
-
-    function control(userScore,cpuScore){
-        if(userScore=="bust"){
-            let buttons = document.querySelectorAll("button");
-            buttons.disabled = true;
-        }
-    }
-
-    function endGame(){
-        this.dealButton.disabled = false;
-        this.standButton.disabled = true;
-        this.askButton.disabled = true;
-    }
-    function stopGame(){
-        this.dealButton.disabled = false;
-        this.standButton.disabled = true;
-        this.askButton.disabled = true;
-        let imgCpu = document.querySelector(".cpu");
-        while(imgCpu.firstChild){
-            imgCpu.removeChild(imgCpu.firstChild);
-        }
-        let imgUser = document.querySelector(".user-cards");
-        while(imgUser.firstChild){
-            imgUser.removeChild(imgUser.lastChild);
-        }
-        let span = document.querySelector("#punteggio");
-
-        span.innerHTML = 0;
-    }
-
-    function hit(){
-        let card = this.deckManager.getCard();
-        showCard(card[1]);
-        this.userDeck.push(card[0]);
-
-        let score = count(this.userDeck);
-        updateScore(score);
-        control(score,score);
-    } // chiedi un'altra carta
-
-    function stand(){} // chiedi il risultato
+    console.log("total finale");
+    console.log(total);
+    return total;
 }
+BlackJack.prototype.control = function(userScore){
+    let resultH2 = document.querySelector(".result");
+    if(userScore=="bust"){
+        resultH2.innerHTML = `IL DEALER HA VINTO.`;
+        let buttons = document.querySelectorAll("button");
+        buttons.disabled = true;
+        return;
+    }
+    if(!this.done){
+        return;
+    }
+    if(this.dealerTotal=="bust" || userScore>this.dealerTotal){
+        resultH2.innerHTML = `${this.user.nome} HA VINTO!`;
+        let buttons = document.querySelectorAll("button");
+        buttons.disabled = true;
+        return;
+    }
+    if(userScore<this.dealerTotal){
+        resultH2.innerHTML = `IL DEALER HA VINTO.`;
+        let buttons = document.querySelectorAll("button");
+        buttons.disabled = true;
+        return;
+    }
+    resultH2.innerHTML = `PAREGGIO.`;
+    let buttons = document.querySelectorAll("button");
+    buttons.disabled = true;
+}
+BlackJack.prototype.endGame = function(){
+    this.dealButton.disabled = true;
+    this.standButton.disabled = true;
+    this.askButton.disabled = true;
+}
+BlackJack.prototype.stopGame = function(){
+    let resultH2 = document.querySelector(".result");
+    resultH2.innerHTML = "";
+    this.dealerDeck  = [];
+    this.userDeck = [];
+    this.dealButton.disabled = false;
+    this.standButton.disabled = true;
+    this.askButton.disabled = true;
+    let imgCpu = document.querySelector(".cpu");
+    while(imgCpu.firstChild){
+        imgCpu.removeChild(imgCpu.firstChild);
+    }
+    let imgUser = document.querySelector(".user-cards");
+    while(imgUser.firstChild){
+        imgUser.removeChild(imgUser.lastChild);
+    }
+    let span = document.querySelector("#punteggio");
+
+    span.innerHTML = 0;
+}
+BlackJack.prototype.hit = function(){
+    let card = this.deckManager.getCard();
+    this.showCard(card[1]);
+    this.userDeck.push(card[0]);
+
+    this.user.total = this.count(this.userDeck);
+    this.updateScore(this.user.total);
+    this.control(this.user.total);
+} // chiedi un'altra carta
+BlackJack.prototype.stand = function(){
+    this.done = true;
+    this.dealButton.disabled = true;
+    this.standButton.disabled = true;
+    this.askButton.disabled = true;
+    do{
+        let card = this.deckManager.getCard();
+        this.showCardBot(card[1]);
+        this.dealerDeck.push(card[0]);
+        this.dealerTotal = this.count(this.dealerDeck);
+    }while(this.dealerTotal<17)
+    this.control(this.user.total);
+} // chiedi il risultato
 
 function User(nome, saldo){
     this.nome = nome;
     this.saldo = saldo;
-
-    function puntaSoldi(valore){
-        this.saldo -= valore;
-    }
-
-    function aggiungiSoldi(valore){
-        this.saldo += valore;
-    }
+    this.total = 0;
+}
+User.prototype.puntaSoldi = function(){
+    this.saldo -= valore;
+}
+User.prototype.aggiungiSoldi = function(){
+    this.saldo += valore;
 }
 
 let game = new BlackJack();
