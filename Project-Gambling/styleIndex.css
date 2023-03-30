@@ -1,0 +1,39 @@
+body{
+    background-image: url(carte_francesi/table1.jpg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    border-left: 20px;
+}
+
+.navbar a{
+    color: white;
+    display: inline-block;
+    padding: 20px;
+    width: 100px;
+    text-align: center;
+    color: black;
+    transition: .3s ease-in-out all;
+}
+.navbar a:hover{
+    background: beige;
+    color: brown;
+    text-decoration: none;
+}
+.contenitore {
+	max-width: 1000px;
+	width: 90%;
+	margin: auto;
+	display: flex;
+	justify-content: space-between;
+}
+a {
+	text-decoration: none;
+	outline: none;
+    color: white;
+}
+
+a:hover {
+	text-decoration: underline;
+}
