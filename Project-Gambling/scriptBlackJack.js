@@ -86,8 +86,8 @@ function BlackJack(){
 
     this.start = function() {
         this.standButton.disabled = true;
-        let name = undefined;
-        let cash = undefined;
+        let name = null;
+        let cash = null;
         do{
             name = prompt("Inserisci il tuo nome");
             if(name){
@@ -126,6 +126,12 @@ function BlackJack(){
         card.src = image;
         div.appendChild(card);
     }
+    function showCardBot(image){
+        let div = document.querySelector(".cpu");
+        let card = document.createElement("img");
+        card.src = image;
+        div.appendChild(card);
+    }
 
     function userBet(){}
 
@@ -136,9 +142,14 @@ function BlackJack(){
         let card = this.deckManager.getCard();
         showCard(card[1]);
         this.userDeck.push(card[0]);
+
         card = this.deckManager.getCard();
-        //showCard(card[1]); //dovrà stampare la carta coperta per la cpu????
+        showCardBot(card[1]);
         this.dealerDeck.push(card[0]);
+
+        card = this.deckManager.getCard();
+        showCard(card[1]);
+        this.userDeck.push(card[0]);
 
         control(this.userDeck);
 
@@ -151,7 +162,7 @@ function BlackJack(){
             if(value == 1){
                 total += 11;
                 if(total > 21){
-                    total - 10;
+                    total -= 10;
                 }
             }else{
                 total += value;
