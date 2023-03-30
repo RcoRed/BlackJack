@@ -85,7 +85,9 @@ function BlackJack(){
     this.surrender = document.querySelector("#surrender");
 
     this.start = function() {
+        this.dealButton.disabled = false;
         this.standButton.disabled = true;
+        this.askButton.disabled = true;
         let name = null;
         let cash = null;
         do{
@@ -118,6 +120,7 @@ function BlackJack(){
         this.dealButton.addEventListener('click', deal.bind(this));
         this.askButton.addEventListener('click', hit.bind(this));
         this.standButton.addEventListener('click', stand.bind(this));
+        this.surrender.addEventListener('click', stopGame.bind(this));
     }
 
     function showCard(image){
@@ -132,12 +135,17 @@ function BlackJack(){
         card.src = image;
         div.appendChild(card);
     }
+    function updateScore(score){
+        let span = document.querySelector("#punteggio");
+        span.innerHTML = score;
+    }
 
     function userBet(){}
 
     function deal(){
         this.dealButton.disabled = true;
         this.standButton.disabled = false;
+        this.askButton.disabled = false;
 
         let card = this.deckManager.getCard();
         showCard(card[1]);
@@ -151,13 +159,19 @@ function BlackJack(){
         showCard(card[1]);
         this.userDeck.push(card[0]);
 
-        control(this.userDeck);
-
-
+        let score = count(this.userDeck);
+        updateScore(score);
+        control(score,score);
     } // chiedi la prima carta
 
-    function control(deck){
-        let total;
+    function count(deck){
+        this.dealButton = document.querySelector("#deal-button");
+        this.askButton = document.querySelector("#ask-button");
+        this.standButton = document.querySelector("#stand-button");
+        console.log(this.dealButton);
+        console.log(this.standButton);
+        console.log(this.askButton);
+        let total = null;
         for(let value of deck){
             if(value == 1){
                 total += 11;
@@ -169,12 +183,50 @@ function BlackJack(){
             }
         }
         if(total > 21){
+            endGame();
             return "bust";
         }
         return total;
     }
 
-    function hit(){} // chiedi un'altra carta
+    function control(userScore,cpuScore){
+        if(userScore=="bust"){
+            let buttons = document.querySelectorAll("button");
+            buttons.disabled = true;
+        }
+    }
+
+    function endGame(){
+        this.dealButton.disabled = false;
+        this.standButton.disabled = true;
+        this.askButton.disabled = true;
+    }
+    function stopGame(){
+        this.dealButton.disabled = false;
+        this.standButton.disabled = true;
+        this.askButton.disabled = true;
+        let imgCpu = document.querySelector(".cpu");
+        while(imgCpu.firstChild){
+            imgCpu.removeChild(imgCpu.firstChild);
+        }
+        let imgUser = document.querySelector(".user-cards");
+        while(imgUser.firstChild){
+            imgUser.removeChild(imgUser.lastChild);
+        }
+        let span = document.querySelector("#punteggio");
+
+        span.innerHTML = 0;
+    }
+
+    function hit(){
+        let card = this.deckManager.getCard();
+        showCard(card[1]);
+        this.userDeck.push(card[0]);
+
+        let score = count(this.userDeck);
+        updateScore(score);
+        control(score,score);
+    } // chiedi un'altra carta
 
     function stand(){} // chiedi il risultato
 }
