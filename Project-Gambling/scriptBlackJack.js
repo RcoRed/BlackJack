@@ -88,7 +88,7 @@ BlackJack.prototype.deal = function(){// chiedi la prime carta
     let resultH2 = document.querySelector(".result");
     resultH2.innerHTML = "";
     this.betTotal.innerHTML = "0";
-    //carte
+    //nuovo mazzo?
     if(this.counterCards>20){
         console.log("nuovo mazzo");
         this.deckManager = new DeckManager();
@@ -198,6 +198,8 @@ BlackJack.prototype.count = function(deck){//conta valore del deck
     //se il totale di user è 21 lo vede e non permette più al giocatore di chiedere carta, stand automatico
     if(total == 21){
         this.stand();
+        
+        this.user.total = total;
         return;
     }
     return total;
