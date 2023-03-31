@@ -96,7 +96,7 @@ BlackJack.prototype.userBet = function(valore){
         resultH2.innerHTML = `NON HAI ABBASTANZA SOLDI`;
         return false;
     }
-    this.betTotal.innerHTML = valore;
+    this.betTotal.innerHTML = valore*2;
     return true;
 }
 BlackJack.prototype.deal = function(){
@@ -162,7 +162,6 @@ BlackJack.prototype.controlBlackJack = function(){
         resultH2.innerHTML = `IL DEALER HA VINTO. PER BLACK JACK.`;
         let buttons = document.querySelectorAll("button");
         buttons.disabled = true;
-        this.betTotal.innerHTML = "0";
         return;
     }
     this.user.aggiungiSoldi(this.bet*2);
@@ -174,16 +173,17 @@ BlackJack.prototype.controlBlackJack = function(){
 }
 BlackJack.prototype.count = function(deck){
     let total = 0;
-    let asso = false;
+    let asso = 0;
     for(let value of deck){
         if(value == 0){
             value = 10;
         }
         if(value == 1){
-            asso = true;
             total += 11;
             if(total > 21){
                 total -= 10;
+            }else{
+                asso++;
             }
         }else{
             total += value;
@@ -191,7 +191,7 @@ BlackJack.prototype.count = function(deck){
     }
 
     if(total > 21){
-        if(asso){
+        for(let i = 0;i<asso;i++){
             total -= 10;
         }
         if(total > 21){
@@ -207,7 +207,6 @@ BlackJack.prototype.control = function(userScore){
         resultH2.innerHTML = `IL DEALER HA VINTO.`;
         let buttons = document.querySelectorAll("button");
         buttons.disabled = true;
-        this.betTotal.innerHTML = "0";
         return;
     }
     if(!this.done){
@@ -215,7 +214,6 @@ BlackJack.prototype.control = function(userScore){
     }
     this.done = false;
     if(this.dealerTotal=="bust" || userScore>this.dealerTotal){
-        this.betTotal.innerHTML = "0";
         this.user.aggiungiSoldi(this.bet*2);
         this.showUser();
         resultH2.innerHTML = `${this.user.nome} HA VINTO!`;
@@ -224,13 +222,11 @@ BlackJack.prototype.control = function(userScore){
         return;
     }
     if(userScore<this.dealerTotal){
-        this.betTotal.innerHTML = "0";
         resultH2.innerHTML = `IL DEALER HA VINTO.`;
         let buttons = document.querySelectorAll("button");
         buttons.disabled = true;
         return;
     }
-    this.betTotal.innerHTML = "0";
     this.user.aggiungiSoldi(this.bet);
     this.showUser();
     resultH2.innerHTML = `PAREGGIO.`;
@@ -238,7 +234,6 @@ BlackJack.prototype.control = function(userScore){
     buttons.disabled = true;
 }
 BlackJack.prototype.endGame = function(){
-    this.betTotal.innerHTML = "0";
     this.dealButton.disabled = true;
     this.standButton.disabled = true;
     this.askButton.disabled = true;
@@ -289,12 +284,6 @@ BlackJack.prototype.stand = function(){
     }while(this.dealerTotal<17)
     this.control(this.user.total);
 } // chiedi il risultato
-
-function User(nome, saldo){
-    this.nome = nome;
-    this.saldo = saldo;
-    this.total = 0;
-}
 
 let game = new BlackJack();
 game.start();

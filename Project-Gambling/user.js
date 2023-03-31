@@ -1,3 +1,8 @@
+function User(nome, saldo){
+    this.nome = nome;
+    this.saldo = saldo;
+    this.total = 0;
+}
 User.prototype.puntaSoldi = function(value){
     if(value <= this.saldo){
         this.saldo -= value;
