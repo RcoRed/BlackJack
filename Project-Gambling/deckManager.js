@@ -63,6 +63,7 @@ DeckManager.prototype.getCard = function(){
     let card = null;
     let randomValue = null;
     let randomSeed = null;
+    //cerca una carta che non è stata presa
     do{
         randomValue = Math.floor(Math.random()*13);
         randomSeed = Math.floor(Math.random()*4);
@@ -72,14 +73,14 @@ DeckManager.prototype.getCard = function(){
             break;
         }
     }while(true)
-
+    //se è una figura darà valore 0
     if(randomValue > 9){
         randomValue = 0;
     }else{
+        //con il +1 setterà il suo valore iniziale [posizione+1]
         randomValue++;
     }
-
+    //crea la "carta" con valore e link all'immagine e ritorna il dato
     let realCard = [randomValue, card];
-
     return realCard;
 }
