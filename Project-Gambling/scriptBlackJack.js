@@ -1,89 +1,3 @@
-function DeckManager(){
-    this.cuori = ["carte_francesi/casso.png",
-        "carte_francesi/c2.png",
-        "carte_francesi/c3.png",
-        "carte_francesi/c4.png",
-        "carte_francesi/c5.png",
-        "carte_francesi/c6.png",
-        "carte_francesi/c7.png",
-        "carte_francesi/c8.png",
-        "carte_francesi/c9.png",
-        "carte_francesi/c10.png",
-        "carte_francesi/cj.png",
-        "carte_francesi/cq.png",
-        "carte_francesi/ck.png",];
-
-    this.fiori = ["carte_francesi/fasso.png",
-        "carte_francesi/f2.png",
-        "carte_francesi/f3.png",
-        "carte_francesi/f4.png",
-        "carte_francesi/f5.png",
-        "carte_francesi/f6.png",
-        "carte_francesi/f7.png",
-        "carte_francesi/f8.png",
-        "carte_francesi/f9.png",
-        "carte_francesi/f10.png",
-        "carte_francesi/fj.png",
-        "carte_francesi/fq.png",
-        "carte_francesi/fk.png"];
-
-    this.picche = ["carte_francesi/passo.png",
-        "carte_francesi/p2.png",
-        "carte_francesi/p3.png",
-        "carte_francesi/p4.png",
-        "carte_francesi/p5.png",
-        "carte_francesi/p6.png",
-        "carte_francesi/p7.png",
-        "carte_francesi/p8.png",
-        "carte_francesi/p9.png",
-        "carte_francesi/p10.png",
-        "carte_francesi/pj.png",
-        "carte_francesi/pq.png",
-        "carte_francesi/pk.png"];
-
-    this.quadri = ["carte_francesi/qasso.png",
-        "carte_francesi/q2.png",
-        "carte_francesi/q3.png",
-        "carte_francesi/q4.png",
-        "carte_francesi/q5.png",
-        "carte_francesi/q6.png",
-        "carte_francesi/q7.png",
-        "carte_francesi/q8.png",
-        "carte_francesi/q9.png",
-        "carte_francesi/q10.png",
-        "carte_francesi/qj.png",
-        "carte_francesi/qq.png",
-        "carte_francesi/qk.png"];
-
-    this.cardSeed = [this.cuori, this.fiori, this.picche, this.quadri];
-
-
-}
-DeckManager.prototype.getCard = function(){
-    let card = null;
-    let randomValue = null;
-    let randomSeed = null;
-    do{
-        randomValue = Math.floor(Math.random()*13);
-        randomSeed = Math.floor(Math.random()*4);
-        if(this.cardSeed[randomSeed][randomValue]){
-            card = this.cardSeed[randomSeed][randomValue];
-            this.cardSeed[randomSeed][randomValue] = null;
-            break;
-        }
-    }while(true)
-
-    if(randomValue > 9){
-        randomValue = 0;
-    }else{
-        randomValue++;
-    }
-
-    let realCard = [randomValue, card];
-
-    return realCard;
-}
-
 function BlackJack(){
     this.counterCards = 0;
     this.bet = 0;
@@ -94,12 +8,14 @@ function BlackJack(){
     this.dealerTotal = 0;
     this.user = null;
     this.inputBet = document.querySelector("#bet");
+    this.betTotal = document.querySelector(".side h2");
     this.dealButton = document.querySelector("#deal-button");
     this.askButton = document.querySelector("#ask-button");
     this.standButton = document.querySelector("#stand-button");
     this.surrender = document.querySelector("#surrender");
 }
 BlackJack.prototype.start = function(){
+    this.betTotal.innerHTML = "0";
     this.dealButton.disabled = false;
     this.standButton.disabled = true;
     this.askButton.disabled = true;
@@ -163,6 +79,15 @@ BlackJack.prototype.updateScore = function(score){
     span.innerHTML = score;
 }
 BlackJack.prototype.userBet = function(valore){
+    if(valore < 10){//decide la puntata minima
+        this.dealButton.disabled = false;
+        this.standButton.disabled = true;
+        this.askButton.disabled = true;
+        let resultH2 = document.querySelector(".result");
+        resultH2.innerHTML = `LA PUNTATA MINIMA È DI 10$`;
+        return false;
+    }
+
     if(!this.user.puntaSoldi(valore)){
         this.dealButton.disabled = false;
         this.standButton.disabled = true;
@@ -171,15 +96,20 @@ BlackJack.prototype.userBet = function(valore){
         resultH2.innerHTML = `NON HAI ABBASTANZA SOLDI`;
         return false;
     }
+    this.betTotal.innerHTML = valore;
     return true;
 }
 BlackJack.prototype.deal = function(){
+    let resultH2 = document.querySelector(".result");
+    resultH2.innerHTML = "";
+    this.betTotal.innerHTML = "0";
+
     if(this.counterCards>20){
         console.log("nuovo mazzo");
         this.deckManager = new DeckManager();
         this.counterCards = 0;
-
     }
+
     this.dealButton.disabled = true;
     this.standButton.disabled = false;
     this.askButton.disabled = false;
@@ -232,6 +162,7 @@ BlackJack.prototype.controlBlackJack = function(){
         resultH2.innerHTML = `IL DEALER HA VINTO. PER BLACK JACK.`;
         let buttons = document.querySelectorAll("button");
         buttons.disabled = true;
+        this.betTotal.innerHTML = "0";
         return;
     }
     this.user.aggiungiSoldi(this.bet*2);
@@ -276,6 +207,7 @@ BlackJack.prototype.control = function(userScore){
         resultH2.innerHTML = `IL DEALER HA VINTO.`;
         let buttons = document.querySelectorAll("button");
         buttons.disabled = true;
+        this.betTotal.innerHTML = "0";
         return;
     }
     if(!this.done){
@@ -283,6 +215,7 @@ BlackJack.prototype.control = function(userScore){
     }
     this.done = false;
     if(this.dealerTotal=="bust" || userScore>this.dealerTotal){
+        this.betTotal.innerHTML = "0";
         this.user.aggiungiSoldi(this.bet*2);
         this.showUser();
         resultH2.innerHTML = `${this.user.nome} HA VINTO!`;
@@ -291,11 +224,13 @@ BlackJack.prototype.control = function(userScore){
         return;
     }
     if(userScore<this.dealerTotal){
+        this.betTotal.innerHTML = "0";
         resultH2.innerHTML = `IL DEALER HA VINTO.`;
         let buttons = document.querySelectorAll("button");
         buttons.disabled = true;
         return;
     }
+    this.betTotal.innerHTML = "0";
     this.user.aggiungiSoldi(this.bet);
     this.showUser();
     resultH2.innerHTML = `PAREGGIO.`;
@@ -303,11 +238,13 @@ BlackJack.prototype.control = function(userScore){
     buttons.disabled = true;
 }
 BlackJack.prototype.endGame = function(){
+    this.betTotal.innerHTML = "0";
     this.dealButton.disabled = true;
     this.standButton.disabled = true;
     this.askButton.disabled = true;
 }
 BlackJack.prototype.stopGame = function(){
+    this.betTotal.innerHTML = "0";
     let resultH2 = document.querySelector(".result");
     resultH2.innerHTML = "";
     this.dealerDeck  = [];
@@ -357,16 +294,6 @@ function User(nome, saldo){
     this.nome = nome;
     this.saldo = saldo;
     this.total = 0;
-}
-User.prototype.puntaSoldi = function(value){
-    if(value <= this.saldo){
-        this.saldo -= value;
-        return true;
-    }
-    return false;
-}
-User.prototype.aggiungiSoldi = function(valore){
-    this.saldo += valore;
 }
 
 let game = new BlackJack();
