@@ -210,6 +210,10 @@ BlackJack.prototype.control = function(userScore){
         return;
     }
     if(!this.done){
+        if(userScore==21){
+            this.stand();
+            return;
+        }
         return;
     }
     this.done = false;
