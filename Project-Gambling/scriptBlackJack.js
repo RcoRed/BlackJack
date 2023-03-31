@@ -130,7 +130,7 @@ function BlackJack(){
     function userBet(){}
 
     function deal(){
-        this.dealButton.disabled = true;
+        this.dealButton.disabled = false;
         this.standButton.disabled = false;
 
         let card = this.deckManager.getCard();
