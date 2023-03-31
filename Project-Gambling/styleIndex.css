@@ -1,0 +1,81 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Casino', sans-serif;
+    font-size: 30px;
+}
+body{
+    background-image: url(carte_francesi/table1.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+main{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.user{
+    display: flex;
+    flex-direction: column;
+}
+#pulsanti{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+.user-cards,.cpu{
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    padding-left: 70px;
+}
+.user-cards{
+    margin: 50px auto;
+}
+img{
+    height: 100%;
+    margin-left: -70px;
+    transition: 0.15s ease-in-out;
+}
+img:hover{
+    transform: scale(1.1);
+}
+
+button{
+    font-size: 0.7rem;
+    display: inline-block;
+    padding: 20px;
+    width: 150px;
+    height: 70px;
+    text-align: center;
+    color: black;
+    transition: .3s ease-in-out all;
+    border-radius: 20px;
+    border: none;
+}
+button:hover{
+    background-color: rgb(76, 209, 76);
+    cursor: pointer;
+}
+button:disabled{
+    background-color: white;
+    opacity: 0.2;
+    cursor: default;
+}
+#punteggio{
+    text-shadow: #FFF 0px 0px 5px, #FFF 0px 0px 10px, #FFF 0px 0px 15px, #FF2D95 0px 0px 20px, #FF2D95 0px 0px 30px, #FF2D95 0px 0px 40px, #FF2D95 0px 0px 50px, #FF2D95 0px 0px 75px, 2px 2px 2px rgba(206,10,2,0);
+    font-size: 3rem;
+}
+
+.contenitore {
+	max-width: 1000px;
+	width: 90%;
+	margin: auto;
+	display: flex;
+	justify-content: space-between;
+}
