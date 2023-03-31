@@ -39,6 +39,7 @@ main{
     align-items: center;
 }
 .side h2{
+    color: black;
     font-size: 2rem;
 }
 h1{
@@ -113,6 +114,18 @@ button:disabled{
 #punteggio{
     text-shadow: #FFF 0px 0px 5px, #FFF 0px 0px 10px, #FFF 0px 0px 15px, #FF2D95 0px 0px 20px, #FF2D95 0px 0px 30px, #FF2D95 0px 0px 40px, #FF2D95 0px 0px 50px, #FF2D95 0px 0px 75px, 2px 2px 2px rgba(206,10,2,0);
     font-size: 3rem;
+}
+.glow{
+    text-shadow: #FFF 0px 0px 5px, #FFF 0px 0px 10px, #FFF 0px 0px 15px, #FF2D95 0px 0px 20px, #FF2D95 0px 0px 30px, #FF2D95 0px 0px 40px, #FF2D95 0px 0px 50px, #FF2D95 0px 0px 75px, 2px 2px 2px rgba(206,10,2,0);
+}
+.red{
+    text-shadow: #FFF 0px 0px 5px, #FFF 0px 0px 10px, #FFF 0px 0px 15px, #ff0000 0px 0px 20px, #ff0000 0px 0px 30px, #ff0000 0px 0px 40px, #ff0000 0px 0px 50px, #ff0000 0px 0px 75px, 2px 2px 2px rgba(206,10,2,0);
+}
+.green{
+    text-shadow: #FFF 0px 0px 5px, #FFF 0px 0px 10px, #FFF 0px 0px 15px, #0ae60a 0px 0px 20px, #0ae60a 0px 0px 30px, #0ae60a 0px 0px 40px, #0ae60a 0px 0px 50px, #0ae60a 0px 0px 75px, 2px 2px 2px rgba(206,10,2,0);
+}
+.white{
+    text-shadow: #FFF 0px 0px 5px, #FFF 0px 0px 10px, #FFF 0px 0px 15px, #FFF 0px 0px 20px, #FFF 0px 0px 30px, #FFF 0px 0px 40px, #FFF 0px 0px 50px, #FFF 0px 0px 75px, 2px 2px 2px rgba(206,10,2,0);
 }
 .contenitore {
 	max-width: 1000px;

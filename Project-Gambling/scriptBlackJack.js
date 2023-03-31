@@ -66,7 +66,8 @@ BlackJack.prototype.userBet = function(valore){// controlla il bet dell'utente
         this.dealButton.disabled = false;
         this.standButton.disabled = true;
         this.askButton.disabled = true;
-        let resultH2 = document.querySelector(".result");
+        let resultH2 = document.querySelector("#div-result h2");
+        resultH2.setAttribute('class',"red");
         resultH2.innerHTML = `LA PUNTATA MINIMA È DI 10$`;
         return false;
     }
@@ -75,7 +76,8 @@ BlackJack.prototype.userBet = function(valore){// controlla il bet dell'utente
         this.dealButton.disabled = false;
         this.standButton.disabled = true;
         this.askButton.disabled = true;
-        let resultH2 = document.querySelector(".result");
+        let resultH2 = document.querySelector("#div-result h2");
+        resultH2.setAttribute('class',".result red");
         resultH2.innerHTML = `NON HAI ABBASTANZA SOLDI`;
         return false;
     }
@@ -85,8 +87,12 @@ BlackJack.prototype.userBet = function(valore){// controlla il bet dell'utente
 
 BlackJack.prototype.deal = function(){// chiedi la prime carta
     //reset
-    let resultH2 = document.querySelector(".result");
+    let resultH2 = document.querySelector("#div-result h2");
+    console.log(resultH2);
+    resultH2.setAttribute('class',"result");
+    console.log(resultH2);
     resultH2.innerHTML = "";
+    console.log(resultH2);
     this.betTotal.innerHTML = "0";
     //nuovo mazzo?
     if(this.counterCards>20){
@@ -120,6 +126,8 @@ BlackJack.prototype.deal = function(){// chiedi la prime carta
     this.userDeck.push(card[0]);
     //controllo BlackJack
     if((this.userDeck[1] == 0 || this.userDeck[0] == 0) && (this.userDeck[1] == 1 || this.userDeck[0] == 1)){
+        this.user.total = 21;
+        this.updateScore(21);
         this.standButton.disabled = true;
         this.askButton.disabled = true;
         if(this.dealerDeck[0] == 11 || this.dealerDeck[0] == 0 || this.dealerDeck[0] == 1){
@@ -127,10 +135,13 @@ BlackJack.prototype.deal = function(){// chiedi la prime carta
             return;
         }
         this.user.aggiungiSoldi(this.bet*2);
-        let resultH2 = document.querySelector(".result");
+        let resultH2 = document.querySelector("#div-result h2");
+        console.log(resultH2);
+        resultH2.setAttribute('class',"green");
         resultH2.innerHTML = `${this.user.nome} HA VINTO PER BLACK JACK!`;
         let buttons = document.querySelectorAll("button");
         buttons.disabled = true;
+        return;
     }
     //conta e fa l'update dello score
     this.counterCards += 3;
@@ -144,7 +155,9 @@ BlackJack.prototype.controlBlackJack = function(){//controlla se il dealer vince
     this.dealerDeck.push(card[0]);
     //controlla blackJack del dealer
     if(this.dealerDeck[1] == 11 || this.dealerDeck[1] == 0 || this.dealerDeck[1] == 1){
-        let resultH2 = document.querySelector(".result");
+        let resultH2 = document.querySelector("#div-result h2");
+        console.log(resultH2);
+        resultH2.setAttribute('class',"red");
         resultH2.innerHTML = `IL DEALER HA VINTO. PER BLACK JACK.`;
         let buttons = document.querySelectorAll("button");
         buttons.disabled = true;
@@ -154,7 +167,9 @@ BlackJack.prototype.controlBlackJack = function(){//controlla se il dealer vince
     this.user.aggiungiSoldi(this.bet*2);
     //aggiorno visivamente saldo utente
     this.showUser();
-    let resultH2 = document.querySelector(".result");
+    let resultH2 = document.querySelector("#div-result h2");
+    console.log(resultH2);
+    resultH2.setAttribute('class',"green");
     resultH2.innerHTML = `${this.user.nome} HA VINTO PER BLACK JACK!`;
     let buttons = document.querySelectorAll("button");
     buttons.disabled = true;
@@ -197,18 +212,19 @@ BlackJack.prototype.count = function(deck){//conta valore del deck
     }
     //se il totale di user è 21 lo vede e non permette più al giocatore di chiedere carta, stand automatico
     if(total == 21){
-        this.stand();
-        
         this.user.total = total;
+        this.stand();
         return;
     }
     return total;
 }
 
 BlackJack.prototype.control = function(userScore){//controlla chi è il vincitore
-    let resultH2 = document.querySelector(".result");
+    let resultH2 = document.querySelector("#div-result h2");
+    console.log(resultH2);
     //se lo score di user è bust allora ha perso
     if(userScore=="bust"){
+        resultH2.setAttribute('class',"red");
         resultH2.innerHTML = `IL DEALER HA VINTO.`;
         let buttons = document.querySelectorAll("button");
         buttons.disabled = true;
@@ -224,6 +240,7 @@ BlackJack.prototype.control = function(userScore){//controlla chi è il vincitor
     if(this.dealerTotal=="bust" || userScore>this.dealerTotal){
         this.user.aggiungiSoldi(this.bet*2);
         this.showUser();
+        resultH2.setAttribute('class',"green");
         resultH2.innerHTML = `${this.user.nome} HA VINTO!`;
         let buttons = document.querySelectorAll("button");
         buttons.disabled = true;
@@ -231,6 +248,7 @@ BlackJack.prototype.control = function(userScore){//controlla chi è il vincitor
     }
     //controlla se il dealer ha vinto
     if(userScore<this.dealerTotal){
+        resultH2.setAttribute('class',"red");
         resultH2.innerHTML = `IL DEALER HA VINTO.`;
         let buttons = document.querySelectorAll("button");
         buttons.disabled = true;
@@ -239,6 +257,7 @@ BlackJack.prototype.control = function(userScore){//controlla chi è il vincitor
     //se nessuna delle precendi è vera allora pareggio
     this.user.aggiungiSoldi(this.bet);
     this.showUser();
+    resultH2.setAttribute('class',"white");
     resultH2.innerHTML = `PAREGGIO.`;
     let buttons = document.querySelectorAll("button");
     buttons.disabled = true;
@@ -252,7 +271,9 @@ BlackJack.prototype.endGame = function(){//verrà richiamato automaticamente da 
 
 BlackJack.prototype.stopGame = function(){//resetta la mano quando si clicca sul pulsante continua
     this.betTotal.innerHTML = "0";
-    let resultH2 = document.querySelector(".result");
+    let resultH2 = document.querySelector("#div-result h2");
+    console.log(resultH2);
+    resultH2.setAttribute('class',"result");
     resultH2.innerHTML = "";
     this.dealerDeck  = [];
     this.userDeck = [];
