@@ -13,3 +13,4 @@ User.prototype.puntaSoldi = function(value){
 User.prototype.aggiungiSoldi = function(valore){
     this.saldo += valore;
 }
+//si capisce abbastanza questa classe
