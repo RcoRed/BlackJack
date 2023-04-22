@@ -2,31 +2,65 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Casino', sans-serif;
+    font-family: 'Grand Casino', sans-serif;
     font-size: 30px;
 }
 body{
     background-image: url(carte_francesi/table1.jpg);
     background-repeat: no-repeat;
     background-size: cover;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 15% auto auto;
     height: 100vh;
+}
+header{
+    text-align: center;
+    grid-column-start: 1;
+    grid-column-end: 4;
 }
 main{
     height: 100%;
+    grid-column-start: 2;
+    grid-column-end: 3;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+}
+.side{
+    text-align: center;
+    color: white;
+    padding-left: 20px;
+    grid-column-start: 1;
+    grid-column-end: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    align-items: center;
+}
+.side h2{
+    font-size: 2rem;
+}
+h1{
+    text-shadow: #FFF 0px 0px 5px, #FFF 0px 0px 10px, #FFF 0px 0px 15px, #FF2D95 0px 0px 20px, #FF2D95 0px 0px 30px, #FF2D95 0px 0px 40px, #FF2D95 0px 0px 50px, #FF2D95 0px 0px 75px, 2px 2px 2px rgba(206,10,2,0);
+    color: rgb(255, 255, 255);
+    font-size: 2rem;
 }
 .user{
     display: flex;
     flex-direction: column;
 }
-#pulsanti{
+#pulsanti, #data{
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 10px;
+}
+#data{
+    color: white;
+}
+#div-result{
+    margin: 50px auto 0 auto;
 }
 .user-cards,.cpu{
     height: 250px;
@@ -41,12 +75,15 @@ img{
     height: 100%;
     margin-left: -70px;
     transition: 0.15s ease-in-out;
+    border-radius: 20px;
+    border: 2px black solid;
 }
 img:hover{
     transform: scale(1.1);
+    box-shadow: 1px 5px 9px 3px rgba(0,0,0,0.8);
 }
 
-button{
+button, #bet{
     font-size: 0.7rem;
     display: inline-block;
     padding: 20px;
@@ -67,11 +104,16 @@ button:disabled{
     opacity: 0.2;
     cursor: default;
 }
+#bet{
+    font-size: 1rem;
+}
+#b-e-t{
+    color: white;
+}
 #punteggio{
     text-shadow: #FFF 0px 0px 5px, #FFF 0px 0px 10px, #FFF 0px 0px 15px, #FF2D95 0px 0px 20px, #FF2D95 0px 0px 30px, #FF2D95 0px 0px 40px, #FF2D95 0px 0px 50px, #FF2D95 0px 0px 75px, 2px 2px 2px rgba(206,10,2,0);
     font-size: 3rem;
 }
-
 .contenitore {
 	max-width: 1000px;
 	width: 90%;
